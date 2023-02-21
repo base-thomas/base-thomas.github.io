@@ -4790,6 +4790,7 @@ Game.Launch=function()
 		}
 		Game.ClickCookie=function(e,amount)
 		{
+			console.log('modified click')
 			var now=Date.now();
 			if (e) e.preventDefault();
 			if (Game.OnAscend || Game.AscendTimer>0 || Game.T<3 || now-Game.lastClick<1000/((e?e.detail:1)===0?3:50)) {}
@@ -4812,7 +4813,6 @@ Game.Launch=function()
 				}
 				//if (Game.prefs.numbers) Game.particleAdd(Game.mouseX+Math.random()*8-4,Game.mouseY-8+Math.random()*8-4,0,-2,1,4,2,'','+'+Beautify(amount,1));
 				if (Game.prefs.numbers) Game.particleAdd(Game.cookieOriginX+Math.random()*8-4,Game.cookieOriginY-8+Math.random()*8-4,0,-2,1,4,2,'','+'+Beautify(amount,1));
-				console.log('modified click')
 
 				Game.runModHook('click');
 				
