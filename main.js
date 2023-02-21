@@ -4807,9 +4807,11 @@ Game.Launch=function()
 				if (Game.prefs.particles)
 				{
 					Game.particleAdd();
-					Game.particleAdd(Game.mouseX,Game.mouseY,Math.random()*4-2,Math.random()*-2-2,Math.random()*0.5+0.75,1,2);
+					//Game.particleAdd(Game.mouseX,Game.mouseY,Math.random()*4-2,Math.random()*-2-2,Math.random()*0.5+0.75,1,2);
+					Game.particleAdd(Game.cookieOriginX,Game.cookieOriginY,Math.random()*4-2,Math.random()*-2-2,Math.random()*0.5+0.75,1,2);
 				}
-				if (Game.prefs.numbers) Game.particleAdd(Game.mouseX+Math.random()*8-4,Game.mouseY-8+Math.random()*8-4,0,-2,1,4,2,'','+'+Beautify(amount,1));
+				//if (Game.prefs.numbers) Game.particleAdd(Game.mouseX+Math.random()*8-4,Game.mouseY-8+Math.random()*8-4,0,-2,1,4,2,'','+'+Beautify(amount,1));
+				if (Game.prefs.numbers) Game.particleAdd(Game.cookieOriginX+Math.random()*8-4,Game.cookieOriginY-8+Math.random()*8-4,0,-2,1,4,2,'','+'+Beautify(amount,1));
 				
 				Game.runModHook('click');
 				
