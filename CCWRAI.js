@@ -55,3 +55,7 @@ Game.registerMod('CCWRAI',{
 });
 
 Game.Notify('CCWRAI Loaded!','',0,2);
+
+//Usage
+//Game.mods['CCWRAI'].AIclickCookie()
+//etc
