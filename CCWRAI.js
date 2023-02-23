@@ -56,6 +56,8 @@ Game.registerMod('CCWRAI',{
 
 Game.Notify('CCWRAI Loaded!','',0,2);
 
-//Usage
+//-----Usage-----//
+//Load with bookmark:
+//javascript:(function() { Game.LoadMod('https://base-thomas.github.io/CCWRAI.js'); }());
 //Game.mods['CCWRAI'].AIclickCookie()
 //etc
