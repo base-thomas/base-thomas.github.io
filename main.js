@@ -4790,9 +4790,6 @@ Game.Launch=function()
 		}
 		Game.ClickCookie=function(e,amount)
 		{
-			console.log('modified click')
-			Game.BigCookieState=2;
-			setTimeout(function() {Game.BigCookieState=0}, 100);
 			var now=Date.now();
 			if (e) e.preventDefault();
 			if (Game.OnAscend || Game.AscendTimer>0 || Game.T<3 || now-Game.lastClick<1000/((e?e.detail:1)===0?3:50)) {}
