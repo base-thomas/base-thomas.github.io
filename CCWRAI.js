@@ -52,6 +52,21 @@ Game.registerMod('CCWRAI',{
 	//check price: Game.ObjectsById[0].getPrice();
 	//get upgrade: Game.UpgradesById[0].click();
 	//check price: Game.UpgradesById[0].getPrice(); //also .canBuy() method and .bought field exist (use together)
+	configNEAT:function() {
+		let config = {
+			model: [
+				{nodeCount: 5, type: "input"},
+				{nodeCount: 1, type: "output", activationfunc: activation.RELU}
+			],
+			mutationRate: 0.05,
+			crossoverMethod: crossover.RANDOM,
+			mutationMethod: mutate.RANDOM,
+			populationSize: 10
+		};
+
+
+		let neat = new NEAT(config);
+	},
 });
 
 Game.Notify('CCWRAI Loaded!','',0,2);
