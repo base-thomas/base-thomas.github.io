@@ -27,7 +27,7 @@ Game.registerMod('CCWRAI',{
 		l('bakerySubtitle').textContent='~'+Game.playerIntro+'~';
 	},
 	AIclickCookie:function(n){
-		console.log('AI cookie click')
+		console.log('AI click')
 		Game.BigCookieState=2;
 		setTimeout(function() {Game.BigCookieState=0}, 100);
 		Game.ClickCookie()
