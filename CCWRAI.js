@@ -15,7 +15,6 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
 		console.log('up to date commit #1')
-		consolg.log(this)
 		let config = {
 			model: [
 				{nodeCount: 1, type: "input"}, //cookies, CpS, (total earned?)
