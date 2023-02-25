@@ -14,7 +14,8 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #0')
+		console.log('up to date commit #1')
+		consolg.log(this)
 		let config = {
 			model: [
 				{nodeCount: 1, type: "input"}, //cookies, CpS, (total earned?)
@@ -125,9 +126,9 @@ Game.registerMod('CCWRAI',{
 		return Game.cookies / (console.timeLog() / 1000);
 	},
 	startRun:function(){
-		console.time('currentRun'); //start run timer
 		console.log(`Starting New Run (#${cIndex}) - Gen ${this.neat.generation}`)
 		this.AIload();
+		console.time('currentRun'); //start run timer
 		this.continueRun();
 	},
 	endRun:function(){
