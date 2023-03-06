@@ -28,9 +28,6 @@ const verbose = false; //flag for including more console outputs for debugging
 const ssound = false; //flag for sound/nosound
 const tickRate = 32; //ms
 
-import * as tf from '@tensorflow/tfjs';
-//const tf = require('@tensorflow/tfjs');
-
 Game.registerMod('CCWRAI',{
 
 	//Default Methods
