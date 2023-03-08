@@ -381,7 +381,7 @@ Game.registerMod('CCWRAI',{
     		this.AIbuyThing(action);
     		r = (Game.handmadeCookies - hc) + 100; //invalid action costs 100
     	} else {nInvalid++;}
-    	return r / 1000; //reduce value of r to avoid vanishing gradient
+    	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
 
 
@@ -409,7 +409,7 @@ Game.registerMod('CCWRAI',{
 	continueRun: async function(){
 		if (to) {clearTimeout(to);}
 		if (stop) {return;}
-		if (iteration >= maxiteration) { // || Game.cookieClicks >= maxClicks
+		if (iteration >= maxiteration * 10 || Game.cookieClicks >= maxClicks) { //
 			this.endRun();
 		} else {
 			const state = this.getState();
