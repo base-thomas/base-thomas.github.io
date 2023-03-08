@@ -47,7 +47,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.15')
+		console.log('up to date commit #8.16')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -430,8 +430,8 @@ Game.registerMod('CCWRAI',{
 			const x = state//tf.tensor2d(state, [1, numStates]);
 			const y = qa//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(x, y);
-			x.print();
-			if (verbose) {y.print();}
+			if (verbose) {x.print();}
+			//if (verbose) {y.print();}
 			x.dispose();
 			y.dispose();
 		}
@@ -439,8 +439,9 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${iteration} Iterations (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${totalReward}`)
-		//await this.train();
+		console.log(`RUN ${rNum} COMPLETE - ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${totalReward}`)
+		//if rNum < rMax
+		this.startRun(); // restart and continue training
 	},
 	train:async function(x, y){ // not used currently
 		await this.network.fit(x, y);
