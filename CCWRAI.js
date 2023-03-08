@@ -397,7 +397,7 @@ Game.registerMod('CCWRAI',{
 		stop = true;
 	},
 	startRun: async function(hls){
-		if (!this.network) {this.initNetwork(hls ? hls : 64);}
+		if (!this.network) {await this.initNetwork(hls ? hls : 64);}
 		rNum++;
 		rewardStore = [];
 		iteration = 0;
