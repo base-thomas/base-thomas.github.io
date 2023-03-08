@@ -46,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.10')
+		console.log('up to date commit #8.11')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -421,7 +421,7 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			const qa = reward + discountRate * this.predict(this.getState()).max().dataSync();
 			const x = state//tf.tensor2d(state, [1, numStates]);
-			const y = tf.tensor2d(qa, [1, numActions]);
+			const y = tf.tensor2d([qa], [1, numActions]);
 			await this.network.fit(x, y);
 			qa.dispose();
 			x.print();
