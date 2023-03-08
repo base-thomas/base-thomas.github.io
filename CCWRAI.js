@@ -432,7 +432,7 @@ Game.registerMod('CCWRAI',{
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = this.predict(this.getState());
-			const qa = reward + discountRate * this.predict(this.getState()).dataSync();
+			const qa = tf.scalar(reward).add(tf.scalar(discountRate).mul(this.predict(this.getState()).dataSync()));
 			const x = state//tf.tensor2d(state, [1, numStates]);
 			const y = qa//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(x, y);
