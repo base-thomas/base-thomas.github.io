@@ -81,7 +81,7 @@ Game.registerMod('CCWRAI',{
 	beautifyTime:function(te){
 		let teh = Math.floor(te / (60*60*1000));
 		let tem = Math.floor((te - teh*(60*60*1000)) / (60*1000));
-		return `${teh === 0 ? `` : `${teh}hr `}${tem}min ${Math.round((te - teh*(60*60*1000) - tem*(60*1000)) / 100) / 10}s`;
+		return `${teh === 0 ? `` : `${teh}hr `}${tem === 0 ? `` : `${tem}min `}${Math.round((te - teh*(60*60*1000) - tem*(60*1000)) / 100) / 10}s`;
 	},
 
 
@@ -467,7 +467,7 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies & Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
+		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 		//this.checkMem();
