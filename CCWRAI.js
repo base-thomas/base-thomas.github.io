@@ -401,7 +401,7 @@ Game.registerMod('CCWRAI',{
 		//prime the network for speed
 		const gx = tf.zeros([1, numStates]);
 		const gy = tf.zeros([1, numActions]);
-		await this.network.fit(gx, gy)
+		await this.network.fit(gx, gy);
 		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
 	continueRun: async function(){
