@@ -46,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.14')
+		console.log('up to date commit #8.15')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -390,7 +390,7 @@ Game.registerMod('CCWRAI',{
 	stopRun:function(){
 		stop = true;
 	},
-	startRun:function(hls){
+	startRun: async function(hls){
 		if (!this.network) {this.initNetwork(hls ? hls : 64);}
 		rewardStore = [];
 		iteration = 0;
@@ -398,10 +398,12 @@ Game.registerMod('CCWRAI',{
 		nInvalid = 0;
 		eps = MAX_EPSILON;
 		this.AIload();
+
 		//prime the network for speed
 		const gx = tf.zeros([1, numStates]);
 		const gy = tf.zeros([1, numActions]);
-		this.network.fit(gx, gy);
+		await this.network.fit(gx, gy);
+
 		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
 	continueRun: async function(){
