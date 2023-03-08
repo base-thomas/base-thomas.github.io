@@ -17,6 +17,9 @@ let nInvalid = 0; //number of unsuccessful clicks & buys
 let detMaxClicks = 15;//2;
 let iteration = 0;
 let plot = []; //array to track performance over generations
+let rewardStore = []; //tracking total reward for each run
+let totalReward = 0; //total value from iterative reward func
+let numActions = 6; //just pi2index for now (no donothing)
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -27,6 +30,10 @@ const nosound777 = 'Mi4wNDh8fDE2NzcxMDk0NTI2OTM7MTY3NzEwOTQ1MjY5NjsxNjc3NjI0MzIy
 const verbose = false; //flag for including more console outputs for debugging
 const ssound = false; //flag for sound/nosound
 const tickRate = 32; //ms
+const MAX_EPSILON = 0.2;
+const MIN_EPSILON = 0.01;
+const LAMBDA = 0.01;
+const discountRate = 0.95;
 
 Game.registerMod('CCWRAI',{
 
@@ -37,9 +44,9 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #7')
+		console.log('up to date commit #8')
 		//this.initNetwork();
-		let config = {
+		/*let config = {
 			model: [
 				{nodeCount: 2, type: "input"}, //cookies, CpS, (total earned?)
 				{nodeCount: 128, activationfunc: activation.RELU},
@@ -50,7 +57,7 @@ Game.registerMod('CCWRAI',{
 			mutationMethod: mutate.RANDOM,
 			populationSize: nCreatures
 		};
-		this.neat = new NEAT(config);
+		this.neat = new NEAT(config);*/
 	},
 	save:function(){
 		//note: we use stringified JSON for ease and clarity but you could store any type of string
@@ -342,11 +349,22 @@ Game.registerMod('CCWRAI',{
 	predict:function(states){
         return tf.tidy(() => this.network.predict(states));
     },
-    train:function(xBatch, yBatch) { //supposed to be async
-        /*await*/ this.network.fit(xBatch, yBatch);
+    /*train:function(xBatch, yBatch) { //supposed to be async
+        await this.network.fit(xBatch, yBatch);
+    },*/
+    getState:function() {
+    	// ***tensor array from 0 to numActions of count of upgrades/buildings
+    	let s = [Game.handmadeCookies, Game.cookieClicks]; //change handmade to cookiesPs later
+    	//for (let i = 0; i < numActions; i++) {
+    		s.push(Game.ObjectsById[0].amount);
+    	//}
+    	for (let i = 3; i < pi2index.length; i++) {
+    		s.push(Game.UpgradesById[index2id[pi2index[i]]].bought);
+    	}
+    	return tf.tidy(() => tf.tensor(s));
     },
-    chooseAction:function(state, eps) {
-        if (Math.random() < eps) {
+    chooseAction:function(state, e) {
+        if (Math.random() < e) {
             return Math.floor(Math.random() * this.numActions) - 1;
         } else {
             return tf.tidy(() => {
@@ -357,6 +375,15 @@ Game.registerMod('CCWRAI',{
             });
         }
     },
+    runAndReward:function(action) {
+    	let r = 0;
+    	if (this.AIcanBuyThing(action)) {
+    		const hc = Game.handmadeCookies;
+    		this.AIbuyThing(action);
+    		r = (Game.handmadeCookies - hc) + 100; //invalid action costs 100
+    	} else {nInvalid++;}
+    	return r / 1000; //reduce value of r to avoid vanishing gradient
+    },
 
 
 	// RL Flow Control Methods
@@ -365,8 +392,44 @@ Game.registerMod('CCWRAI',{
 		stop = true;
 	},
 	startRun:function(hls){
-		if (!this.network) {this.initNetwork(hls ? hls : 128);}
-		this.train();
+		if (!this.network) {this.initNetwork(hls ? hls : 64);}
+		rewardStore = [];
+		iteration = 0;
+		totalReward = 0;
+		nInvalid = 0;
+		eps = MAX_EPSILON;
+		this.AIload();
+		to = setTimeout(() => {this.continueRun()}, tickRate);
+	},
+	continueRun: async function(){
+		if (to) {clearTimeout(to);}
+		if (stop) {return;}
+		if (iteration >= maxiteration) { // || Game.cookieClicks >= maxClicks
+			this.endRun();
+		} else {
+			const state = this.getState();
+			const action = this.model.chooseAction(state, eps);
+			const reward = this.runAndReward(pi2index[action]);
+
+			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
+			iteration++;
+			eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * Math.exp(-LAMBDA * iteration); // Exponentially decay the exploration parameter
+			totalReward += reward;
+
+			to = setTimeout(() => {this.continueRun()}, tickRate);
+			const qa = reward + discountRate * this.network.predict(this.getState).max().dataSync();
+			await this.network.fit(state, qa);
+			qa.dispose();
+		}
+	},
+	endRun:function(){
+		rewardStore.push(totalReward);
+		plot.push(Game.handmadeCookies);
+		//await this.train();
+	},
+	train: async function(x, y){
+		// not used currently
+		await this.network.fit(x, y);
 	},
 
 
@@ -478,7 +541,7 @@ Game.registerMod('CCWRAI',{
 	},
 });
 
-Game.Notify('CCWRAI Loaded!','',0,4);
+//Game.Notify('CCWRAI Loaded!','',0,4);
 
 //-----Usage-----//
 //Load with bookmark:
