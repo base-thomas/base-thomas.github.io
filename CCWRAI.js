@@ -360,7 +360,7 @@ Game.registerMod('CCWRAI',{
 		await this.network.save(`downloads://trained-model-v${vNum}-run${rNum}`);
 	},
 	loadModel:async function(v, r) {
-		await this.network = tf.loadLayersModel(`downloads://trained-model-v${v}-run${r}`);
+		//await this.network = tf.loadLayersModel(`downloads://trained-model-v${v}-run${r}`);
 	},
 	train:async function(x, y) { // not used currently
 		await this.network.fit(x, y);
