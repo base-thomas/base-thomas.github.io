@@ -20,7 +20,7 @@ let iteration = 0;
 let plot = []; //array to track performance over generations
 let rewardStore = []; //tracking total reward for each run
 let totalReward = 0; //total value from iterative reward func
-let numActions = 6; //just pi2index for now (no donothing)
+let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 7; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
@@ -437,7 +437,8 @@ Game.registerMod('CCWRAI',{
 			this.endRun();
 		} else {
 			const state = this.getState();
-			const action = this.chooseAction(state, eps);
+			const action = this.chooseAction(state, eps) + 1;
+			if (action > 6) {console.error(`Chosen action outside pi2index bounds: ${action}`);}
 			const reward = this.runAndReward(pi2index[action]);
 
 			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
@@ -448,13 +449,13 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = this.predict(this.getState());
 			const qa = tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate))); //.dataSync()
-			const x = state//tf.tensor2d(state, [1, numStates]);
-			const y = qa;//tf.tensor2d(qa, [1, numActions]);
-			await this.network.fit(x, y);
-			if (verbose) {x.print();}
-			//if (verbose) {y.print();}
-			x.dispose();
-			y.dispose();
+			//const x = state//tf.tensor2d(state, [1, numStates]);
+			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
+			await this.network.fit(state, qa);
+			if (verbose) {state.print();}
+			//if (verbose) {qa.print();}
+			state.dispose();
+			qa.dispose();
 		}
 	},
 	endRun:function(){
