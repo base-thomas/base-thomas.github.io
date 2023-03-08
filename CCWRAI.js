@@ -401,9 +401,11 @@ Game.registerMod('CCWRAI',{
 		stop = true;
 	},
 	startRun: async function(hls){
-		if (!this.network) {await this.initNetwork(hls ? hls : 64);}
+		if (!this.network) {
+			await this.initNetwork(hls ? hls : 64);
+			rewardStore = [];
+		}
 		rNum++;
-		rewardStore = [];
 		iteration = 0;
 		totalReward = 0;
 		nInvalid = 0;
@@ -430,7 +432,7 @@ Game.registerMod('CCWRAI',{
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = this.predict(this.getState());
-			const qa = reward + discountRate * this.predict(this.getState()).max().dataSync();
+			const qa = reward + discountRate * this.predict(this.getState()).dataSync();
 			const x = state//tf.tensor2d(state, [1, numStates]);
 			const y = qa//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(x, y);
@@ -450,6 +452,11 @@ Game.registerMod('CCWRAI',{
 	bestRun:function(){
 		iteration = 0;
 		eps = 0;
+		console.log(`Starting Best-Learnings Run`);
+
+		runTime = Date.now();
+		this.AIload();
+		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
 
 	// NEAT Network Methods
