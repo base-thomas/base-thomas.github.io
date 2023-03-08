@@ -354,8 +354,14 @@ Game.registerMod('CCWRAI',{
 		const gy = tf.zeros([1, numActions]);
 		await this.network.fit(gx, gy);
 	},
+	train:async function(x, y){ // not used currently
+		await this.network.fit(x, y);
+	},
 	predict:function(states){
         return tf.tidy(() => this.network.predict(states));
+    },
+    checkMem:function() {
+    	tf.memory();
     },
     getState:function() {
     	// tensor array from 0 to numActions of count of upgrades/buildings
@@ -391,9 +397,6 @@ Game.registerMod('CCWRAI',{
     	//r -= 100;
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
-	train:async function(x, y){ // not used currently
-		await this.network.fit(x, y);
-	},
 
 
 	// RL Flow Control Methods
@@ -401,6 +404,13 @@ Game.registerMod('CCWRAI',{
 	stopRun:function(){
 		stop = true;
 	},
+	unstopRun:function(){
+		stop = false;
+	},
+	resumeRun:function(){
+		this.unstopRun();
+		this.continueRun();
+	}
 	startRun: async function(hls){
 		if (!this.network) {
 			await this.initNetwork(hls ? hls : 64);
