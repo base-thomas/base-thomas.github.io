@@ -421,7 +421,7 @@ Game.registerMod('CCWRAI',{
 
 			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
 			iteration++;
-			eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * Math.exp(-LAMBDA * iteration); // Exponentially decay the exploration parameter
+			//eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * Math.exp(-LAMBDA * rNum); // Exponentially decay the exploration parameter
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
@@ -439,7 +439,7 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${totalReward}`)
+		console.log(`RUN ${rNum} COMPLETE - ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${Math.round(totalReward*100)/100}`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
