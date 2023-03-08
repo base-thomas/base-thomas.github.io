@@ -46,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.2')
+		console.log('up to date commit #8.4')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -410,7 +410,7 @@ Game.registerMod('CCWRAI',{
 			this.endRun();
 		} else {
 			const state = this.getState();
-			const action = this.model.chooseAction(state, eps);
+			const action = this.network.chooseAction(state, eps);
 			const reward = this.runAndReward(pi2index[action]);
 
 			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
