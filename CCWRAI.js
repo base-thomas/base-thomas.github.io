@@ -329,7 +329,7 @@ Game.registerMod('CCWRAI',{
 
 	// RL Network Methods
 
-	initNetwork:function(hiddenLayerSizes){
+	initNetwork:async function(hiddenLayerSizes){
 		//
 		this.network = tf.sequential();
 		if (!Array.isArray(hiddenLayerSizes)) {
@@ -348,6 +348,11 @@ Game.registerMod('CCWRAI',{
 
         this.network.summary();
         this.network.compile({optimizer: 'adam', loss: 'meanSquaredError'});
+
+		//prime the network for speed
+		const gx = tf.zeros([1, numStates]);
+		const gy = tf.zeros([1, numActions]);
+		await this.network.fit(gx, gy);
 	},
 	predict:function(states){
         return tf.tidy(() => this.network.predict(states));
@@ -399,14 +404,9 @@ Game.registerMod('CCWRAI',{
 		totalReward = 0;
 		nInvalid = 0;
 		eps = MAX_EPSILON;
+
 		runTime = Date.now();
 		this.AIload();
-
-		//prime the network for speed
-		const gx = tf.zeros([1, numStates]);
-		const gy = tf.zeros([1, numActions]);
-		await this.network.fit(gx, gy);
-
 		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
 	continueRun:async function(){
@@ -441,7 +441,7 @@ Game.registerMod('CCWRAI',{
 		plot.push(Game.handmadeCookies);
 		console.log(`RUN ${rNum} COMPLETE - ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${totalReward}`)
 		//if rNum < rMax
-		this.startRun(); // restart and continue training
+		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
 	train:async function(x, y){ // not used currently
 		await this.network.fit(x, y);
