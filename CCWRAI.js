@@ -24,6 +24,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 7; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
+const vNum = 9;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -48,7 +49,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.16')
+		console.log(`Loaded CCWRAI Version ${vNum}`)
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -355,10 +356,16 @@ Game.registerMod('CCWRAI',{
 		const gy = tf.zeros([1, numActions]);
 		await this.network.fit(gx, gy);
 	},
-	train:async function(x, y){ // not used currently
+	saveModel:async function() {
+		await this.network.save(`downloads://trained-model-v${vNum}-run${rNum}`);
+	},
+	loadModel:async function(v, r) {
+		await this.network = tf.loadLayersModel(`downloads://trained-model-v${v}-run${r}`);
+	},
+	train:async function(x, y) { // not used currently
 		await this.network.fit(x, y);
 	},
-	predict:function(states){
+	predict:function(states) {
         return tf.tidy(() => this.network.predict(states));
     },
     checkMem:function() {
@@ -463,7 +470,7 @@ Game.registerMod('CCWRAI',{
 		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies & Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
-		this.checkMem();
+		//this.checkMem();
 	},
 	bestRun:function(){
 		dps = ``;
