@@ -383,6 +383,7 @@ Game.registerMod('CCWRAI',{
     runAndReward:function(action) {
     	let r = 0;
     	if (this.AIcanBuyThing(action)) {
+    		dps = `${dps}, ${action}`;
     		const hc = Game.handmadeCookies;
     		this.AIbuyThing(action);
     		r = (Game.handmadeCookies - hc)// + 100; //invalid action costs 100?
@@ -445,7 +446,7 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${Math.round(totalReward*100)/100}`)
+		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies --> Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)})`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
