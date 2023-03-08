@@ -437,8 +437,7 @@ Game.registerMod('CCWRAI',{
 			this.endRun();
 		} else {
 			const state = this.getState();
-			const action = this.chooseAction(state, eps) + 1;
-			if (action > 6) {console.error(`Chosen action outside pi2index bounds: ${action}`);}
+			const action = this.chooseAction(state, eps) + 1; // +1 to start at pi2index[1]
 			const reward = this.runAndReward(pi2index[action]);
 
 			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
@@ -448,7 +447,7 @@ Game.registerMod('CCWRAI',{
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = this.predict(this.getState());
-			const qa = tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate))); //.dataSync()
+			const qa = tf.tidy(() => {return tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
 			//const x = state//tf.tensor2d(state, [1, numStates]);
 			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(state, qa);
@@ -461,9 +460,10 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies & Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)})`)
+		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies & Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
+		this.checkMem();
 	},
 	bestRun:function(){
 		dps = ``;
