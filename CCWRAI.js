@@ -362,7 +362,9 @@ Game.registerMod('CCWRAI',{
         return tf.tidy(() => this.network.predict(states));
     },
     checkMem:function() {
-    	tf.memory();
+    	let m = tf.memory();
+    	console.log(`numBytes allocated: ${m.numBytes}`);
+    	console.log(`numTensors allocated: ${m.numTensors}`);
     },
     getState:function() {
     	// tensor array from 0 to numActions of count of upgrades/buildings
@@ -418,6 +420,7 @@ Game.registerMod('CCWRAI',{
 			rewardStore = [];
 		}
 		rNum++;
+		dps = ``;
 		iteration = 0;
 		totalReward = 0;
 		nInvalid = 0;
@@ -462,7 +465,9 @@ Game.registerMod('CCWRAI',{
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
 	bestRun:function(){
+		dps = ``;
 		iteration = 0;
+		nInvalid = 0;
 		eps = 0;
 		console.log(`Starting Best-Learnings Run`);
 
