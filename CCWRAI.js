@@ -460,7 +460,7 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
-		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies --> Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)})`)
+		console.log(`RUN ${rNum} COMPLETE - ${Game.handmadeCookies} Cookies & Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${this.beautifyTime(Date.now() - runTime)})`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
