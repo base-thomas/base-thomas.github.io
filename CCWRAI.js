@@ -3,6 +3,7 @@ let gbc = false; //var for storing intergenerational best creature
 let to = undefined; //var storing setTimeout id
 let stop = false; //flag for run flow control
 let lastdp = false; //var for tracking restart index for continueDet
+let dps = ``; //var storing string of actions
 let dLayer = 1; //current deterministic layer
 let dPoint = [1]; //deterministic path data (using index2id nums)
 let dLayerMin = 0; //layer at which continueDet stops recursing
