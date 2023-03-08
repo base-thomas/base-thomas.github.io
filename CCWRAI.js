@@ -46,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.8')
+		console.log('up to date commit #8.9')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -363,7 +363,7 @@ Game.registerMod('CCWRAI',{
     	for (let i = 3; i < pi2index.length; i++) {
     		s.push(Game.UpgradesById[index2id[pi2index[i]]].bought);
     	}
-    	return tf.tidy(() => tf.tensor2d(s, [1, numStates]));
+    	return tf.tidy(() => tf.tensor2d(s, [1, numStates]).print());
     },
     chooseAction:function(state, e) {
         if (Math.random() < e) {
@@ -420,7 +420,9 @@ Game.registerMod('CCWRAI',{
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			const qa = reward + discountRate * this.predict(this.getState()).max().dataSync();
-			await this.network.fit(state, qa);
+			const x = tf.tensor2d(state, [1, numStates]).print();
+			const y = tf.tensor2d(qa, [1, numActions]).print();
+			await this.network.fit(x, y);
 			qa.dispose();
 		}
 	},
