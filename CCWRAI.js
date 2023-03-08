@@ -36,7 +36,7 @@ const tickRate = 32; //ms
 const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
-const discountRate = 0.95;
+const discountRate = 0.99;
 
 Game.registerMod('CCWRAI',{
 
@@ -390,6 +390,9 @@ Game.registerMod('CCWRAI',{
     	r -= 100;
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
+	train:async function(x, y){ // not used currently
+		await this.network.fit(x, y);
+	},
 
 
 	// RL Flow Control Methods
@@ -426,8 +429,8 @@ Game.registerMod('CCWRAI',{
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
-			const qa = this.predict(this.getState());
-			//const qa = reward + discountRate * this.predict(this.getState()).max().dataSync();
+			//const qa = this.predict(this.getState());
+			const qa = reward + discountRate * this.predict(this.getState()).max().dataSync();
 			const x = state//tf.tensor2d(state, [1, numStates]);
 			const y = qa//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(x, y);
@@ -444,10 +447,10 @@ Game.registerMod('CCWRAI',{
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 	},
-	train:async function(x, y){ // not used currently
-		await this.network.fit(x, y);
+	bestRun:function(){
+		iteration = 0;
+		eps = 0;
 	},
-
 
 	// NEAT Network Methods
 
