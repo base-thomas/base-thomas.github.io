@@ -20,7 +20,8 @@ let plot = []; //array to track performance over generations
 let rewardStore = []; //tracking total reward for each run
 let totalReward = 0; //total value from iterative reward func
 let numActions = 6; //just pi2index for now (no donothing)
-let numStates = 7;
+let numStates = 7; //number of columns in state tensors
+let eps = 0; //epsilon var (explore vs exploit factor)
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -45,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.1')
+		console.log('up to date commit #8.2')
 		//this.initNetwork();
 		/*let config = {
 			model: [
