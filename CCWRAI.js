@@ -46,7 +46,7 @@ Game.registerMod('CCWRAI',{
 		//Game.registerHook('check',function(){if (!Game.playerIntro){Game.mods['test mod'].addIntro();}});
 		//Game.registerHook('click',function(){Game.Notify(choose(['A good click.','A solid click.','A mediocre click.','An excellent click!']),'',0,0.5);});
 		//Game.registerHook('cps',function(cps){return cps*2;});
-		console.log('up to date commit #8.4')
+		console.log('up to date commit #8.5')
 		//this.initNetwork();
 		/*let config = {
 			model: [
@@ -363,7 +363,7 @@ Game.registerMod('CCWRAI',{
     	for (let i = 3; i < pi2index.length; i++) {
     		s.push(Game.UpgradesById[index2id[pi2index[i]]].bought);
     	}
-    	return tf.tidy(() => tf.tensor(s));
+    	return tf.tidy(() => tf.tensor2d(s));
     },
     chooseAction:function(state, e) {
         if (Math.random() < e) {
