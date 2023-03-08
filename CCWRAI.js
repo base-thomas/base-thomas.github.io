@@ -387,7 +387,7 @@ Game.registerMod('CCWRAI',{
     		this.AIbuyThing(action);
     		r = (Game.handmadeCookies - hc)// + 100; //invalid action costs 100?
     	} else {nInvalid++;}
-    	r -= 100;
+    	//r -= 100;
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
 	train:async function(x, y){ // not used currently
