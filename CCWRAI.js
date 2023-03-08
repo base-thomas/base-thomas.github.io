@@ -363,7 +363,7 @@ Game.registerMod('CCWRAI',{
     	for (let i = 3; i < pi2index.length; i++) {
     		s.push(Game.UpgradesById[index2id[pi2index[i]]].bought);
     	}
-    	return tf.tidy(() => tf.tensor2d(s, [1, numStates]).print());
+    	return tf.tidy(() => tf.tensor2d(s, [1, numStates]));
     },
     chooseAction:function(state, e) {
         if (Math.random() < e) {
