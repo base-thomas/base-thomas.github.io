@@ -10,8 +10,8 @@ let saveDet = []; //var for storing deterministic run starts --> goes action[0] 
 let branches = 0; //now just a branch count, previously an array for storing all deterministic branches
 let totalBranches = 0; //total (sum) for full det runs
 let bestDetBranch = [0, 0, 0, 0, ``, ``]; //var for storing best cps score, current cookies, total cookies earned, #branch, dPoint string, and save point
-let detRuntime = 0; //track total time elapsed
-let detSegtime = 0; //track time per det segment
+let runTime = 0; //track total time elapsed
+let segTime = 0; //track time per det segment
 let cIndex = 0; //index of current creature (run)
 let nInvalid = 0; //number of unsuccessful clicks & buys
 let detMaxClicks = 15;//2;
@@ -22,6 +22,7 @@ let totalReward = 0; //total value from iterative reward func
 let numActions = 6; //just pi2index for now (no donothing)
 let numStates = 7; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
+let rNum = 0;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -87,9 +88,9 @@ Game.registerMod('CCWRAI',{
 	startDetermining:function(){
 		if (saveDet.length === 0) { //start fresh
 			console.warn(`Starting New Deterministic Run`);
-			detSegtime = Date.now();
-			if (detRuntime === 0) { //theres not an active run
-				detRuntime = detSegtime;
+			segTime = Date.now();
+			if (runTime === 0) { //theres not an active run
+				runTime = segTime;
 			}
 			this.AIload(); //load starting x777 save
 			setTimeout(() => {this.AIclickCookie()}, tickRate); //always have to start with a click
@@ -164,10 +165,10 @@ Game.registerMod('CCWRAI',{
 	endDetermining:function(){
 		//export progress?
 		if (detMaxClicks < maxClicks) { //permute the next click
-			console.log(`DETERMINISTIC SEGMENT DONE - ${branches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${this.beautifyTime(Date.now() - detSegtime)}`);
+			console.log(`DETERMINISTIC SEGMENT DONE - ${branches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${this.beautifyTime(Date.now() - segTime)}`);
 			console.log(`BEST BRANCH PATH --> ${bestDetBranch[4]}`)
 			//reset all variables incl dPoint, dLayer, branches, detSave, lastdp
-			detSegtime = Date.now();
+			segTime = Date.now();
 			detMaxClicks++;
 			totalBranches += branches;
 			branches = 0;
@@ -184,11 +185,11 @@ Game.registerMod('CCWRAI',{
 			if (verbose) {console.log(dPoint);}
 			to = setTimeout(() => {this.startDetermining()}, tickRate);
 		} else { //completely done
-			console.log(`DETERMINISTIC SEGMENT DONE - ${branches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${this.beautifyTime(Date.now() - detSegtime)}`);
-			detRuntime = `TOTAL TIME ELAPSED: ${this.beautifyTime(Date.now() - detRuntime)}`;
-			console.log(`FULL DETERMINISTIC RUN DONE - ${totalBranches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${detRuntime}`);
+			console.log(`DETERMINISTIC SEGMENT DONE - ${branches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${this.beautifyTime(Date.now() - segTime)}`);
+			runTime = `TOTAL TIME ELAPSED: ${this.beautifyTime(Date.now() - runTime)}`;
+			console.log(`FULL DETERMINISTIC RUN DONE - ${totalBranches} BRANCHES - (Max Clicks: ${detMaxClicks}) --> ${runTime}`);
 			console.log(`BEST BRANCH PATH --> ${bestDetBranch[4]}`)
-			detRuntime = 0; //reset in case I want to rerun the whole det
+			runTime = 0; //reset in case I want to rerun the whole det
 		}
 	},
 
@@ -392,11 +393,13 @@ Game.registerMod('CCWRAI',{
 	},
 	startRun: async function(hls){
 		if (!this.network) {this.initNetwork(hls ? hls : 64);}
+		rNum++;
 		rewardStore = [];
 		iteration = 0;
 		totalReward = 0;
 		nInvalid = 0;
 		eps = MAX_EPSILON;
+		runTime = Date.now();
 		this.AIload();
 
 		//prime the network for speed
@@ -406,7 +409,7 @@ Game.registerMod('CCWRAI',{
 
 		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
-	continueRun: async function(){
+	continueRun:async function(){
 		if (to) {clearTimeout(to);}
 		if (stop) {return;}
 		if (iteration >= maxiteration * 10 || Game.cookieClicks >= maxClicks) { //
@@ -428,7 +431,7 @@ Game.registerMod('CCWRAI',{
 			const y = qa//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(x, y);
 			x.print();
-			y.print();
+			if (verbose) {y.print();}
 			x.dispose();
 			y.dispose();
 		}
@@ -436,9 +439,10 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push(Game.handmadeCookies);
+		console.log(`RUN ${rNum} COMPLETE - ${iteration} Iterations (${this.beautifyTime(Date.now() - runTime)}) - ${Game.handmadeCookies} Cookies --> Total Reward: ${totalReward}`)
 		//await this.train();
 	},
-	train: async function(x, y){ // not used currently
+	train:async function(x, y){ // not used currently
 		await this.network.fit(x, y);
 	},
 
