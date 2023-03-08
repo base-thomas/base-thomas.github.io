@@ -20,6 +20,7 @@ let plot = []; //array to track performance over generations
 let rewardStore = []; //tracking total reward for each run
 let totalReward = 0; //total value from iterative reward func
 let numActions = 6; //just pi2index for now (no donothing)
+let numStates = 7;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -338,10 +339,10 @@ Game.registerMod('CCWRAI',{
             units: hiddenLayerSize,
             activation: 'relu',
             // `inputShape` is required only for the first layer.
-            inputShape: i === 0 ? [this.numStates] : undefined
+            inputShape: i === 0 ? [numStates] : undefined
             }));
         });
-        this.network.add(tf.layers.dense({units: this.numActions}));
+        this.network.add(tf.layers.dense({units: numActions}));
 
         this.network.summary();
         this.network.compile({optimizer: 'adam', loss: 'meanSquaredError'});
@@ -353,7 +354,7 @@ Game.registerMod('CCWRAI',{
         await this.network.fit(xBatch, yBatch);
     },*/
     getState:function() {
-    	// ***tensor array from 0 to numActions of count of upgrades/buildings
+    	// tensor array from 0 to numActions of count of upgrades/buildings
     	let s = [Game.handmadeCookies, Game.cookieClicks]; //change handmade to cookiesPs later
     	//for (let i = 0; i < numActions; i++) {
     		s.push(Game.ObjectsById[0].amount);
