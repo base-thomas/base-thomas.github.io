@@ -368,7 +368,7 @@ Game.registerMod('CCWRAI',{
 		}
 	},
 	saveResults:function() { //saves run data in csv format
-		let csv = `Run#,Iterations,nInvalid,Reward,Cookies\n`;
+		let csv = `Run#,Iterations,nInvalid,Reward,Cookies,Actions\n`;
 		let line = ``;
 		for (let i = 0; i < plot.length; i++) {
 			let line = `${i + 1}`;
@@ -501,7 +501,7 @@ Game.registerMod('CCWRAI',{
 	},
 	endRun:function(){
 		rewardStore.push(totalReward);
-		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps]);
+		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
 		//to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
