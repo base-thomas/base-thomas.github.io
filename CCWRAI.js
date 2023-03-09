@@ -477,7 +477,7 @@ Game.registerMod('CCWRAI',{
 		plot.push(Game.handmadeCookies);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
-		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
+		//to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 		//this.checkMem();
 	},
 	bestRun:function(){
