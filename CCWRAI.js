@@ -377,7 +377,7 @@ Game.registerMod('CCWRAI',{
 			}
 			csv += `${line}\n`;
 		}
-		const filename = `trained-model-results-v${vRun}-run${rNum}`
+		const filename = `trained-model-results-v${vNum}-run${rNum}`
 		let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
 		if (navigator.msSaveBlob) { // IE 10+
 			navigator.msSaveBlob(blob, filename);
