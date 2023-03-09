@@ -24,7 +24,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.1;
+const vNum = 8.16//9.1;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -377,7 +377,7 @@ Game.registerMod('CCWRAI',{
 			}
 			csv += `${line}\n`;
 		}
-		const filename = `trained-model-results-v${v}-run${r}`
+		const filename = `trained-model-results-v${vRun}-run${rNum}`
 		let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
 		if (navigator.msSaveBlob) { // IE 10+
 			navigator.msSaveBlob(blob, filename);
