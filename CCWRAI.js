@@ -494,7 +494,7 @@ Game.registerMod('CCWRAI',{
 			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(state, qa);
 			if (verbose) {state.print();}
-			if (verbose) {qa.print();}
+			//if (verbose) {qa.print();}
 			state.dispose();
 			qa.dispose();
 		}
