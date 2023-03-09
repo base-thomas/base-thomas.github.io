@@ -368,17 +368,20 @@ Game.registerMod('CCWRAI',{
 		}
 	},
 	saveResults:function() { //saves run data in csv format
-		let csv = "Run#,Iterations,nInvalid,Reward,Cookies\n";
+		let csv = `Run#,Iterations,nInvalid,Reward,Cookies\n`;
 		let line = ``;
 		for (let i = 0; i < plot.length; i++) {
 			let line = `${i + 1}`;
 			for (let j = 0; j < plot[i].length; j++) {
+				if (j === plot[i].length - 1) {
+					plot[i][j] = `"${plot[i][j]}"`; //add quotes for last element (dps)
+				}
 				line += `,${plot[i][j]}`;
 			}
 			csv += `${line}\n`;
 		}
-		const filename = `trained-model-results-v${vNum}-run${rNum}`
-		let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+		const filename = `trained-model-results-v${vNum}-run${rNum}.csv`
+		let blob = new Blob([csv], {type: `text/csv;charset=utf-8;`});
 		if (navigator.msSaveBlob) { // IE 10+
 			navigator.msSaveBlob(blob, filename);
 		} else {
@@ -498,7 +501,7 @@ Game.registerMod('CCWRAI',{
 	},
 	endRun:function(){
 		rewardStore.push(totalReward);
-		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies]);
+		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
 		//if rNum < rMax
 		//to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
