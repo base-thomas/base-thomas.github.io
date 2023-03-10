@@ -471,7 +471,7 @@ Game.registerMod('CCWRAI',{
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
-                currentQ[action] = nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;
+                currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
         		currentQ.print();
