@@ -18,7 +18,6 @@ let nInvalid = 0; //number of unsuccessful clicks & buys
 let detMaxClicks = 15;//2;
 let iteration = 0;
 let plot = []; //array to track performance over generations
-let rewardStore = []; //tracking total reward for each run
 let totalReward = 0; //total value from iterative reward func
 let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
@@ -469,7 +468,6 @@ Game.registerMod('CCWRAI',{
 	startRun:async function(hls){
 		if (!this.network) {
 			await this.initNetwork(hls ? hls : 64);
-			rewardStore = [];
 			plot = [];
 			runTime = Date.now();
 		}
@@ -511,8 +509,7 @@ Game.registerMod('CCWRAI',{
 			//qa.dispose();
 		}
 	},
-	endRun:function(){
-		rewardStore.push(totalReward);
+	endRun:async function(){
 		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - segTime)}`)
 		segTime = Date.now();
