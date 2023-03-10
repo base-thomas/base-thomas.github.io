@@ -455,7 +455,7 @@ Game.registerMod('CCWRAI',{
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
 	train:async function() {
-        this.checkMem();
+        //this.checkMem();
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
         const nextStates = batch.map(([, , , nextState]) => tf.tidy(() => {return nextState ? nextState : tf.zeros([1, numStates]);}));
@@ -493,14 +493,8 @@ Game.registerMod('CCWRAI',{
         x.dispose();
         y.dispose();
         currentQ.dispose();
-        this.checkMem();
-        //currentQ.forEach((state) => state.dispose());
         //this.checkMem();
-        /*states.forEach((state) => state.dispose());
-        nextStates.forEach((nState) => {if (nState) {nState.dispose();}});
-        this.checkMem();
-        //batch.forEach(([state, , , nState]) => {state.dispose(); if (nState) {nState.dispose();}});
-        //this.checkMem();*/
+        //currentQ.forEach((state) => state.dispose());
 	},
 
 
@@ -546,7 +540,7 @@ Game.registerMod('CCWRAI',{
 
 			//this.addSample([lastC, action, reward, Game.handmadeCookies]); //Save incremental situation for extra training
 			iteration++;
-			//eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * Math.exp(-LAMBDA * rNum); // Exponentially decay the exploration parameter
+			eps = MIN_EPSILON + (MAX_EPSILON - MIN_EPSILON) * Math.exp(-LAMBDA * rNum); // Exponentially decay the exploration parameter
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
@@ -554,7 +548,7 @@ Game.registerMod('CCWRAI',{
 			//await this.network.fit(state, qa);
 			this.addSample([state, action, reward, tf.tidy(() => {return Game.cookieClicks >= maxClicks ? null : this.getState();})]);
 			if (maxMemFlag) {
-				this.checkMem();
+				//this.checkMem();
 			}
 
 			if (verbose) {state.print();}
