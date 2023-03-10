@@ -380,7 +380,7 @@ Game.registerMod('CCWRAI',{
 			}
 			csv += `${line}\n`;
 		}
-		const filename = `trained-model-results-v${vNum}-run${rNum}.csv`
+		const filename = `model-results-v${vNum}-run${rNum}.csv`
 		let blob = new Blob([csv], {type: `text/csv;charset=utf-8;`});
 		if (navigator.msSaveBlob) { // IE 10+
 			navigator.msSaveBlob(blob, filename);
@@ -450,7 +450,7 @@ Game.registerMod('CCWRAI',{
 	train:async function() {
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
-        const nextStates = batch.map(([, , , nextState]) => nextState ? nextState : tf.zeros([1, numStates]));
+        const nextStates = await batch.map(([, , , nextState]) => nextState ? nextState : tf.zeros([1, numStates]));
         console.log(nextStates);
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.predict(state));
@@ -534,7 +534,7 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
 			//await this.network.fit(state, qa);
-			tf.tidy(() => {return this.addSample([state, action, reward, /*Game.cookieClicks >= maxClicks ? null : */this.getState()]);});
+			tf.tidy(() => {return this.addSample([state, action, reward, Game.cookieClicks >= maxClicks ? null : this.getState()]);});
 
 			if (verbose) {state.print();}
 			//if (verbose) {qa.print();}
