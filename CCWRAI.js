@@ -455,7 +455,7 @@ Game.registerMod('CCWRAI',{
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.predict(state));
         // Predict the values of each action at each next state
-        const qsad = nextStates.map((nextState) => this.predict(nextState).dataSync());
+        const qsad = nextStates.map((nextState) => this.predict(nextState);
 
         let x = new Array();
         let y = new Array();
@@ -534,7 +534,7 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
 			//await this.network.fit(state, qa);
-			tf.tidy(() => {return this.addSample([state, action, reward, /*Game.cookieClicks >= maxClicks ? null : */this.getState()]);});
+			tf.tidy(() => {return this.addSample([state, action, reward, Game.cookieClicks >= maxClicks ? null : tf.tidy(() => {return this.getState();})]);});
 
 			if (verbose) {state.print();}
 			//if (verbose) {qa.print();}
