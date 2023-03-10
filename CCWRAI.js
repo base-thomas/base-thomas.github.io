@@ -455,7 +455,7 @@ Game.registerMod('CCWRAI',{
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
 	train:async function() {
-        //this.checkMem();
+        this.checkMem();
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
         const nextStates = batch.map(([, , , nextState]) => tf.tidy(() => {return nextState ? nextState : tf.zeros([1, numStates]);}));
@@ -493,7 +493,7 @@ Game.registerMod('CCWRAI',{
         x.dispose();
         y.dispose();
         currentQ.dispose();
-        //this.checkMem();
+        this.checkMem();
         //currentQ.forEach((state) => state.dispose());
 	},
 
