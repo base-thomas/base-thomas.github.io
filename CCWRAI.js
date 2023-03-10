@@ -23,7 +23,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.3;
+const vNum = 9.4;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -466,14 +466,16 @@ Game.registerMod('CCWRAI',{
 
         let x = new Array();
         let y = new Array();
+        let currentQ;
 
         // Update the states rewards with the discounted next states rewards
         batch.forEach(
             ([state, action, reward, nextState], index) => {
-                const currentQ = qsa[index];
+                /*const */currentQ = qsa[index];
                 currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
+                currentQ.dispo
             }
         );
 
@@ -490,6 +492,7 @@ Game.registerMod('CCWRAI',{
 
         x.dispose();
         y.dispose();
+        currentQ.dispose();
         this.checkMem();
         //currentQ.forEach((state) => state.dispose());
         //this.checkMem();
