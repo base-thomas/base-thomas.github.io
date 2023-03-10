@@ -24,7 +24,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.2;
+const vNum = 9.1//.2;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -448,6 +448,7 @@ Game.registerMod('CCWRAI',{
 
 	stopRun:function(){
 		stop = true;
+		if (runTime) {console.log(`Stopping Run - Total Time Elapsed: ${this.beautifyTime(Date.now() - runTime)}`);}
 	},
 	unstopRun:function(){
 		stop = false;
@@ -460,6 +461,8 @@ Game.registerMod('CCWRAI',{
 		if (!this.network) {
 			await this.initNetwork(hls ? hls : 64);
 			rewardStore = [];
+			plot = [];
+			runTime = Date.now();
 		}
 		rNum++;
 		dps = ``;
@@ -468,7 +471,7 @@ Game.registerMod('CCWRAI',{
 		nInvalid = 0;
 		eps = MAX_EPSILON;
 
-		runTime = Date.now();
+		segTime = Date.now();
 		this.AIload();
 		to = setTimeout(() => {this.continueRun()}, tickRate);
 	},
@@ -502,7 +505,7 @@ Game.registerMod('CCWRAI',{
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
-		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - runTime)}`)
+		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - segTime)}`)
 		//if rNum < rMax
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 		//this.checkMem();
