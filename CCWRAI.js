@@ -374,9 +374,9 @@ Game.registerMod('CCWRAI',{
 		for (let i = 0; i < plot.length; i++) {
 			let line = `${i + 1}`;
 			for (let j = 0; j < plot[i].length; j++) {
-				if (j === plot[i].length - 1) {
+				/*if (j === plot[i].length - 1) {
 					plot[i][j] = `"${plot[i][j]}"`; //add quotes for last element (dps)
-				}
+				}*/
 				line += `,${plot[i][j]}`;
 			}
 			csv += `${line}\n`;
@@ -454,6 +454,7 @@ Game.registerMod('CCWRAI',{
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
 	train:async function() {
+        this.checkMem();
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
         const nextStates = batch.map(([, , , nextState]) => nextState ? nextState : tf.zeros([1, numStates]));
@@ -492,8 +493,8 @@ Game.registerMod('CCWRAI',{
         states.forEach((state) => state.dispose());
         nextStates.forEach((nState) => {if (nState) {nState.dispose();}});
         this.checkMem();
-        batch.forEach(([state, , , nState]) => {state.dispose(); if (nState) {nState.dispose();}});
-        this.checkMem();
+        //batch.forEach(([state, , , nState]) => {state.dispose(); if (nState) {nState.dispose();}});
+        //this.checkMem();
 	},
 
 
@@ -554,7 +555,7 @@ Game.registerMod('CCWRAI',{
 		}
 	},
 	endRun:async function(){
-		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
+		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, `"${dps.substring(2)}"`]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - segTime)}`)
 		segTime = Date.now();
 		await this.train();
