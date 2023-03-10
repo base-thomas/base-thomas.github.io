@@ -455,7 +455,7 @@ Game.registerMod('CCWRAI',{
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.predict(state));
         // Predict the values of each action at each next state
-        const qsad = nextStates.map((nextState) => this.predict(nextState);
+        const qsad = nextStates.map((nextState) => this.predict(nextState));
 
         let x = new Array();
         let y = new Array();
