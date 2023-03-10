@@ -451,7 +451,7 @@ Game.registerMod('CCWRAI',{
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
         const nextStates = batch.map(
-            ([, , , nextState]) => nextState ? nextState : tf.zeros([this.model.numStates])
+            ([, , , nextState]) => nextState ? nextState : tf.zeros([numStates])
         );
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.model.predict(state));
@@ -476,8 +476,8 @@ Game.registerMod('CCWRAI',{
         qsad.forEach((state) => state.dispose());
 
         // Reshape the batches to be fed to the network
-        x = tf.tensor2d(x, [x.length, this.model.numStates])
-        y = tf.tensor2d(y, [y.length, this.model.numActions])
+        x = tf.tensor2d(x, [x.length, numStates])
+        y = tf.tensor2d(y, [y.length, numActions])
 
         // Learn the Q(s, a) values given associated discounted rewards
 		await this.network.fit(x, y);
