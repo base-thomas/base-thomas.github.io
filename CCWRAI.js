@@ -40,7 +40,7 @@ const LAMBDA = 0.01;
 const discountRate = 0.96;
 const maxMemLen = 10240;
 const memBatchSize = 512;
-var _ = require('lodash');
+//var _ = require('lodash');
 let maxMemFlag = false;
 
 Game.registerMod('CCWRAI',{
@@ -474,15 +474,16 @@ Game.registerMod('CCWRAI',{
 
         let x = new Array();
         let y = new Array();
-        let currentQ;
+        //let currentQ;
 
         // Update the states rewards with the discounted next states rewards
         batch.forEach(
             ([state, action, reward, nextState], index) => {
-                currentQ = qsa[index];
+                let currentQ = qsa[index];
                 currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
+                currentQ.dispose();
             }
         );
 
@@ -499,7 +500,7 @@ Game.registerMod('CCWRAI',{
 
         x.dispose();
         y.dispose();
-        currentQ.dispose();
+        //currentQ.dispose();
         this.checkMem();
         //currentQ.forEach((state) => state.dispose());
 	},
