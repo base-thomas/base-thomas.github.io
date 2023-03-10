@@ -475,7 +475,7 @@ Game.registerMod('CCWRAI',{
                 currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
-                currentQ.dispo
+                currentQ.dispose();
             }
         );
 
