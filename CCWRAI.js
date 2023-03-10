@@ -24,7 +24,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9//.2;
+const vNum = 9.2;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -488,8 +488,8 @@ Game.registerMod('CCWRAI',{
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
-			//const qa = this.predict(this.getState());
-			const qa = tf.tidy(() => {return tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
+			//const nstate = Game.cookieClicks >= maxClicks ? 0 : this.predict(this.getState());
+			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.scalar(reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
 			//const x = state//tf.tensor2d(state, [1, numStates]);
 			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(state, qa);
