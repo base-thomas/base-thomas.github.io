@@ -454,9 +454,9 @@ Game.registerMod('CCWRAI',{
             ([, , , nextState]) => nextState ? nextState : tf.zeros([numStates])
         );
         // Predict the values of each action at each state
-        const qsa = states.map((state) => this.model.predict(state));
+        const qsa = states.map((state) => this.predict(state));
         // Predict the values of each action at each next state
-        const qsad = nextStates.map((nextState) => this.model.predict(nextState));
+        const qsad = nextStates.map((nextState) => this.predict(nextState));
 
         let x = new Array();
         let y = new Array();
@@ -465,7 +465,7 @@ Game.registerMod('CCWRAI',{
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
-                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].max().dataSync() : reward;
+                currentQ[action] = nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
             }
