@@ -23,7 +23,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.4;
+const vNum = 9.5;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -38,7 +38,9 @@ const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
 const discountRate = 0.96;
-const maxMemLen = 5000;
+const maxMemLen = 5120;
+const memBatchSize = 512;
+const _ = require('loadsh');
 let maxMemFlag = false;
 
 Game.registerMod('CCWRAI',{
@@ -413,7 +415,13 @@ Game.registerMod('CCWRAI',{
     },
     sampleMem:function(n) {
     	//just use all of it for now
-    	return tf.tidy(() => {return this.memory;});
+    	//return tf.tidy(() => {return this.memory;});
+    	if (!n) {
+    		return _.sampleSize(this.memory, memBatchSize);
+    	} else {
+    		return _.sampleSize(this.memory, n);
+    	}
+    	
     },
     checkMem:function() {
     	let m = tf.memory();
@@ -471,11 +479,10 @@ Game.registerMod('CCWRAI',{
         // Update the states rewards with the discounted next states rewards
         batch.forEach(
             ([state, action, reward, nextState], index) => {
-                /*const */currentQ = qsa[index];
+                currentQ = qsa[index];
                 currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
-                currentQ.dispose();
             }
         );
 
