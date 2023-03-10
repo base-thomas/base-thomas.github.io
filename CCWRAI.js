@@ -457,7 +457,7 @@ Game.registerMod('CCWRAI',{
         this.checkMem();
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
-        const nextStates = batch.map(([, , , nextState]) => nextState ? nextState : tf.zeros([1, numStates]));
+        const nextStates = batch.map(([, , , nextState]) => tf.tidy(() => {return nextState ? nextState : tf.zeros([1, numStates]);}));
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.predict(state));
         // Predict the values of each action at each next state
@@ -467,17 +467,14 @@ Game.registerMod('CCWRAI',{
         let y = new Array();
 
         // Update the states rewards with the discounted next states rewards
-        this.checkMem();
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
                 currentQ[action] = tf.tidy(() => {return nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;});
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
-        		currentQ.print();
             }
         );
-        this.checkMem();
 
         // Clean unused tensors
         qsa.forEach((state) => state.dispose());
