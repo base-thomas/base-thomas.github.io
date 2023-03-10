@@ -38,7 +38,8 @@ const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
 const discountRate = 0.96;
-const maxMemLen = 2400;
+const maxMemLen = 5000;
+let maxMemFlag = false;
 
 Game.registerMod('CCWRAI',{
 
@@ -404,10 +405,10 @@ Game.registerMod('CCWRAI',{
     addSample:function(s) {
     	this.memory.push(s);
     	if (this.memory.length > maxMemLen) {
+    		if (!maxMemFlag) {maxMemFlag = true;}
             let [state,,, nextState] = this.memory.shift();
             state.dispose();
             if (nextState) {nextState.dispose();} // handle terminal case where nextState is null
-            this.checkMem();
         }
     },
     sampleMem:function(n) {
@@ -548,7 +549,10 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
 			//await this.network.fit(state, qa);
-			/*tf.tidy(() => {return */this.addSample([state, action, reward, Game.cookieClicks >= maxClicks ? null : this.getState()]);//});
+			this.addSample([state, action, reward, tf.tidy(() => {return Game.cookieClicks >= maxClicks ? null : this.getState();})]);
+			if (maxMemFlag) {
+				this.checkMem();
+			}
 
 			if (verbose) {state.print();}
 			//if (verbose) {qa.print();}
