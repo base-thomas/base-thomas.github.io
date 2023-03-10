@@ -407,7 +407,7 @@ Game.registerMod('CCWRAI',{
     addSample:function(s) {
     	this.memory.push(s);
     	//if (this.memory.length > maxMemory) {}
-    }
+    },
     sampleMem:function(n) {
     	//just do all of it for now
     	return this.memory;
