@@ -38,7 +38,7 @@ const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
 const discountRate = 0.96;
-const maxMemLen = 10000;
+const maxMemLen = 5000;
 let maxMemFlag = false;
 
 Game.registerMod('CCWRAI',{
