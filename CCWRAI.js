@@ -352,6 +352,7 @@ Game.registerMod('CCWRAI',{
         this.network.compile({optimizer: 'adam', loss: 'meanSquaredError'});
 
 		//prime the network for speed
+		this.memory = new Array();
 		const gx = tf.zeros([1, numStates]);
 		const gy = tf.zeros([1, numActions]);
 		await this.network.fit(gx, gy);
@@ -402,6 +403,14 @@ Game.registerMod('CCWRAI',{
 	},
 	predict:function(states) {
         return tf.tidy(() => this.network.predict(states));
+    },
+    addSample:function(s) {
+    	this.memory.push(s);
+    	//if (this.memory.length > maxMemory) {}
+    }
+    sampleMem:function(n) {
+    	//just do all of it for now
+    	return this.memory;
     },
     checkMem:function() {
     	let m = tf.memory();
@@ -478,7 +487,7 @@ Game.registerMod('CCWRAI',{
 	continueRun:async function(){
 		if (to) {clearTimeout(to);}
 		if (stop) {return;}
-		if (iteration >= maxiteration * 10 || Game.cookieClicks >= maxClicks) { //
+		if (iteration >= maxiteration * 10 || Game.cookieClicks >= maxClicks) {
 			this.endRun();
 		} else {
 			const state = this.getState();
@@ -491,24 +500,26 @@ Game.registerMod('CCWRAI',{
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
-			//const nstate = Game.cookieClicks >= maxClicks ? 0 : this.predict(this.getState());
-			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
-			//const x = state//tf.tensor2d(state, [1, numStates]);
-			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
-			await this.network.fit(state, qa);
+			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
+			
+			//await this.network.fit(state, qa);
+			tf.tidy(() => {return this.addSample([state, qa]);});
+
 			if (verbose) {state.print();}
 			//if (verbose) {qa.print();}
-			state.dispose();
-			qa.dispose();
+			//state.dispose();
+			//qa.dispose();
 		}
 	},
 	endRun:function(){
 		rewardStore.push(totalReward);
 		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - segTime)}`)
-		//if rNum < rMax
+		segTime = Date.now();
+		await this.network.fit(this.sampleMem());
+		console.log(`Training complete in ${this.beautifyTime(Date.now() - segTime)}`);
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
-		//this.checkMem();
+		this.checkMem();
 	},
 	bestRun:function(){
 		dps = ``;
