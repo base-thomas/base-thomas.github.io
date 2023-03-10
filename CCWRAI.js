@@ -450,9 +450,7 @@ Game.registerMod('CCWRAI',{
 	train:async function() {
 		const batch = this.sampleMem(); //add sample size later
 		const states = batch.map(([state, , , ]) => state);
-        const nextStates = batch.map(
-            ([, , , nextState]) => nextState ? nextState : tf.zeros([numStates])
-        );
+        const nextStates = batch.map(([, , , nextState]) => nextState ? nextState : tf.zeros([1, numStates]));
         // Predict the values of each action at each state
         const qsa = states.map((state) => this.predict(state));
         // Predict the values of each action at each next state
