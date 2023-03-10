@@ -23,7 +23,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.2;
+const vNum = 9.3;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -38,6 +38,7 @@ const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
 const discountRate = 0.96;
+const maxMemLen = 2400;
 
 Game.registerMod('CCWRAI',{
 
@@ -402,10 +403,15 @@ Game.registerMod('CCWRAI',{
     },
     addSample:function(s) {
     	this.memory.push(s);
-    	//if (this.memory.length > maxMemory) {}
+    	if (this.memory.length > maxMemLen) {
+            let [state,,, nextState] = this.memory.shift();
+            state.dispose();
+            nextState.dispose();
+            this.checkMem();
+        }
     },
     sampleMem:function(n) {
-    	//just do all of it for now
+    	//just use all of it for now
     	return this.memory;
     },
     checkMem:function() {
@@ -548,7 +554,7 @@ Game.registerMod('CCWRAI',{
 		await this.train();
 		console.log(`Training complete in ${this.beautifyTime(Date.now() - segTime)}`);
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
-		this.checkMem();
+		//this.checkMem();
 	},
 	bestRun:function(){
 		dps = ``;
