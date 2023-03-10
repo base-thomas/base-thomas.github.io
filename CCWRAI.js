@@ -488,6 +488,12 @@ Game.registerMod('CCWRAI',{
 
         x.dispose();
         y.dispose();
+        this.checkMem();
+        states.forEach((state) => state.dispose());
+        nextStates.forEach((state) => state.dispose());
+        this.checkMem();
+        batch.forEach(([state, , , nextState]) => {state.dispose(); nextState.dispose();});
+        this.checkMem();
 	},
 
 
