@@ -397,9 +397,6 @@ Game.registerMod('CCWRAI',{
 			}
 		}
 	},
-	train:async function(x, y) { // not used currently
-		await this.network.fit(x, y);
-	},
 	predict:function(states) {
         return tf.tidy(() => this.network.predict(states));
     },
@@ -450,6 +447,44 @@ Game.registerMod('CCWRAI',{
     	//r -= 100;
     	return r / 10000; //reduce value of r to avoid vanishing gradient
     },
+	train:async function() {
+		const batch = this.sampleMem(); //add sample size later
+		const states = batch.map(([state, , , ]) => state);
+        const nextStates = batch.map(
+            ([, , , nextState]) => nextState ? nextState : tf.zeros([this.model.numStates])
+        );
+        // Predict the values of each action at each state
+        const qsa = states.map((state) => this.model.predict(state));
+        // Predict the values of each action at each next state
+        const qsad = nextStates.map((nextState) => this.model.predict(nextState));
+
+        let x = new Array();
+        let y = new Array();
+
+        // Update the states rewards with the discounted next states rewards
+        batch.forEach(
+            ([state, action, reward, nextState], index) => {
+                const currentQ = qsa[index];
+                currentQ[action] = nextState ? reward + this.discountRate * qsad[index].max().dataSync() : reward;
+                x.push(state.dataSync());
+                y.push(currentQ.dataSync());
+            }
+        );
+
+        // Clean unused tensors
+        qsa.forEach((state) => state.dispose());
+        qsad.forEach((state) => state.dispose());
+
+        // Reshape the batches to be fed to the network
+        x = tf.tensor2d(x, [x.length, this.model.numStates])
+        y = tf.tensor2d(y, [y.length, this.model.numActions])
+
+        // Learn the Q(s, a) values given associated discounted rewards
+		await this.network.fit(x, y);
+
+        x.dispose();
+        y.dispose();
+	},
 
 
 	// RL Flow Control Methods
@@ -498,10 +533,9 @@ Game.registerMod('CCWRAI',{
 			totalReward += reward;
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
-			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
-			
+			//const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
 			//await this.network.fit(state, qa);
-			tf.tidy(() => {return this.addSample([state, qa]);});
+			tf.tidy(() => {return this.addSample([state, action, reward, Game.cookieClicks >= maxClicks ? null : this.getState()]);});
 
 			if (verbose) {state.print();}
 			//if (verbose) {qa.print();}
@@ -513,7 +547,7 @@ Game.registerMod('CCWRAI',{
 		plot.push([iteration, nInvalid, totalReward, Game.handmadeCookies, dps.substring(2)]);
 		console.log(`RUN ${rNum} COMPLETE: ${Game.handmadeCookies} Cookies - Total Reward: ${Math.round(totalReward*100)/100} --> ${dps.substring(2)} --> ${iteration} Steps (${nInvalid} Invalid) in ${this.beautifyTime(Date.now() - segTime)}`)
 		segTime = Date.now();
-		await this.network.fit(this.sampleMem());
+		await this.train();
 		console.log(`Training complete in ${this.beautifyTime(Date.now() - segTime)}`);
 		to = setTimeout(() => {this.startRun()}, tickRate); // restart and continue training
 		this.checkMem();
