@@ -467,15 +467,17 @@ Game.registerMod('CCWRAI',{
         let y = new Array();
 
         // Update the states rewards with the discounted next states rewards
+        this.checkMem();
         batch.forEach(
             ([state, action, reward, nextState], index) => {
                 const currentQ = qsa[index];
                 currentQ[action] = nextState ? reward + discountRate * qsad[index].max().dataSync() : reward;
                 x.push(state.dataSync());
                 y.push(currentQ.dataSync());
-        		console.log(currentQ);
+        		currentQ.print();
             }
         );
+        this.checkMem();
 
         // Clean unused tensors
         qsa.forEach((state) => state.dispose());
@@ -491,8 +493,8 @@ Game.registerMod('CCWRAI',{
         x.dispose();
         y.dispose();
         this.checkMem();
-        currentQ.forEach((state) => state.dispose());
-        this.checkMem();
+        //currentQ.forEach((state) => state.dispose());
+        //this.checkMem();
         /*states.forEach((state) => state.dispose());
         nextStates.forEach((nState) => {if (nState) {nState.dispose();}});
         this.checkMem();
