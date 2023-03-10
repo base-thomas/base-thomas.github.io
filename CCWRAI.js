@@ -40,7 +40,7 @@ const LAMBDA = 0.01;
 const discountRate = 0.96;
 const maxMemLen = 10240;
 const memBatchSize = 512;
-const _ = require('lodash');
+var _ = require('lodash');
 let maxMemFlag = false;
 
 Game.registerMod('CCWRAI',{
