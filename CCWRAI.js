@@ -490,9 +490,9 @@ Game.registerMod('CCWRAI',{
         y.dispose();
         this.checkMem();
         states.forEach((state) => state.dispose());
-        nextStates.forEach((state) => state.dispose());
+        nextStates.forEach((nState) => {if (nState) {nState.dispose();}});
         this.checkMem();
-        batch.forEach(([state, , , nextState]) => {state.dispose(); nextState.dispose();});
+        batch.forEach(([state, , , nState]) => {state.dispose(); if (nState) {nState.dispose();}});
         this.checkMem();
 	},
 
