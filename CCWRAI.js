@@ -492,7 +492,7 @@ Game.registerMod('CCWRAI',{
 
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const nstate = Game.cookieClicks >= maxClicks ? 0 : this.predict(this.getState());
-			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.scalar(reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
+			const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.scalar(reward).reshape([1, numActions]) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)))}); //.dataSync()
 			//const x = state//tf.tensor2d(state, [1, numStates]);
 			//const y = qa;//tf.tensor2d(qa, [1, numActions]);
 			await this.network.fit(state, qa);
