@@ -34,11 +34,11 @@ const nosound777 = 'Mi4wNDh8fDE2NzcxMDk0NTI2OTM7MTY3NzEwOTQ1MjY5NjsxNjc3NjI0MzIy
 const verbose = false; //flag for including more console outputs for debugging
 const ssound = false; //flag for sound/nosound
 const tickRate = 32; //ms (32 minimum)
-const MAX_EPSILON = 0.16;
+const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
 const LAMBDA = 0.01;
 const discountRate = 0.96;
-const maxMemLen = 2000;
+const maxMemLen = 2400;
 
 Game.registerMod('CCWRAI',{
 
@@ -406,13 +406,13 @@ Game.registerMod('CCWRAI',{
     	if (this.memory.length > maxMemLen) {
             let [state,,, nextState] = this.memory.shift();
             state.dispose();
-            nextState.dispose();
+            if (nextState) {nextState.dispose();} // handle terminal case where nextState is null
             this.checkMem();
         }
     },
     sampleMem:function(n) {
     	//just use all of it for now
-    	return this.memory;
+    	return tf.tidy(() => {return this.memory;});
     },
     checkMem:function() {
     	let m = tf.memory();
