@@ -36,10 +36,10 @@ const ssound = false; //flag for sound/nosound
 const tickRate = 32; //ms (32 minimum)
 const MAX_EPSILON = 0.16;
 const MIN_EPSILON = 0.01;
-const LAMBDA = 0.005;
-const discountRate = 0.96;
-const maxMemLen = 5120;
-const memBatchSize = 512;
+const LAMBDA = 0.01;
+const discountRate = 0.9//6;
+const maxMemLen = 25600;
+const memBatchSize = 1024;
 //var _ = require('lodash');
 let maxMemFlag = false;
 
