@@ -23,7 +23,7 @@ let numActions = 6; //just pi2index for now (start @ 1: no donothing)
 let numStates = 6; //number of columns in state tensors
 let eps = 0; //epsilon var (explore vs exploit factor)
 let rNum = 0;
-const vNum = 9.6;
+const vNum = 9.5;
 const maxiteration = 52;
 const maxClicks = 15;
 const nCreatures = 20;
@@ -434,7 +434,7 @@ Game.registerMod('CCWRAI',{
     	//for (let i = 0; i < ?; i++) {
     		s.push(Game.ObjectsById[0].amount);
     	//}
-    	for (let i = 2; i < pi2index.length - 1; i++) {
+    	for (let i = 2; i < pi2index.length; i++) {
     		s.push(Game.UpgradesById[index2id[pi2index[i]]].bought);
     	}
     	return tf.tidy(() => tf.tensor2d(s, [1, numStates]));
