@@ -554,7 +554,7 @@ Game.registerMod('CCWRAI',{
 			to = setTimeout(() => {this.continueRun()}, tickRate);
 			//const qa = tf.tidy(() => {return Game.cookieClicks >= maxClicks ? tf.fill([1, numActions], reward) : tf.scalar(reward).add(this.predict(this.getState()).mul(tf.scalar(discountRate)));}); //.dataSync()
 			//await this.network.fit(state, qa);
-			this.addSample([state, action, reward, tf.tidy(() => {return Game.cookieClicks >= maxClicks ? null : this.getState();})]);
+			this.addSample([state, action - 1, reward, tf.tidy(() => {return Game.cookieClicks >= maxClicks ? null : this.getState();})]);
 			if (maxMemFlag) {
 				//this.checkMem();
 			}
