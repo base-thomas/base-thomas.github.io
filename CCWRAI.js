@@ -34,12 +34,12 @@ const nosound777 = 'Mi4wNDh8fDE2NzcxMDk0NTI2OTM7MTY3NzEwOTQ1MjY5NjsxNjc3NjI0MzIy
 const verbose = false; //flag for including more console outputs for debugging
 const ssound = false; //flag for sound/nosound
 const tickRate = 32; //ms (32 minimum)
-const MAX_EPSILON = 0.12;
+const MAX_EPSILON = 0.2;
 const MIN_EPSILON = 0.01;
-const LAMBDA = 0.01;
-const discountRate = 0.99//6;
+const LAMBDA = 0.001;
+const discountRate = 0.96;
 const maxMemLen = 25600;
-const memBatchSize = 1024;
+const memBatchSize = 2560;
 //var _ = require('lodash');
 let maxMemFlag = false;
 
